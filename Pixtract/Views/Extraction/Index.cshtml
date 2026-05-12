@@ -1,0 +1,357 @@
+﻿@{
+    ViewData["Title"] = "Extragere caracteristici";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-5">
+
+                <h4 class="fw-bold mb-1">
+                    <i class="bi bi-magic me-2 text-primary"></i>Extragere caracteristici
+                </h4>
+                <p class="text-muted mb-4">
+                    Incarca una sau mai multe imagini si alege categoria.
+                </p>
+
+                <div id="extractionForm">
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Categorie produs/e</label>
+                        <select id="categorySelect" class="form-select form-select-lg">
+                            <option value="">-- Alege categoria --</option>
+                            <option value="Tricouri dama">Tricouri dama</option>
+                            <option value="Tricouri barbati">Tricouri barbati</option>
+                            <option value="Tricouri copii">Tricouri copii</option>
+                            <option value="Bluze dama">Bluze dama</option>
+                            <option value="Sandale dama">Sandale dama</option>
+                            <option value="Pantaloni sport barbati">Pantaloni sport barbati</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Imagini produs</label>
+                        <div id="dropZone" class="border rounded-4 p-5 text-center"
+                             style="border: 2px dashed #dee2e6; cursor: pointer;">
+                            <i class="bi bi-cloud-upload fs-1 text-muted"></i>
+
+                            <p class="text-muted mt-2 mb-1">
+                                Trage imaginile aici sau
+                                <span class="text-primary fw-semibold">click pentru upload</span>
+                            </p>
+
+                            <p class="text-muted small">
+                                JPG, PNG, WEBP — max 10MB per imagine
+                                <span class="fw-semibold text-primary">(max @ViewBag.MaxImages imagini)</span>
+                            </p>
+                            <input type="file" id="imageInput" accept=".jpg,.jpeg,.png,.webp"
+                                   class="d-none" multiple />
+                        </div>
+
+                        <div id="previewContainer" class="mt-3 d-none">
+                            <div id="previewList" class="d-flex flex-wrap gap-3 justify-content-center"></div>
+                        </div>
+
+                    </div>
+
+                    <div class="d-grid">
+                        <button id="extractBtn" class="btn btn-primary btn-lg" disabled>
+                            <i class="bi bi-magic me-2"></i>Extrage caracteristici
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Loading -->
+                <div id="loadingState" class="text-center py-5 d-none">
+                    <div class="spinner-border text-primary mb-3" role="status"></div>
+                    <p class="text-muted">
+                        Modelul analizeaza imaginile...<br />
+                        <small>Poate dura 15-60 secunde</small>
+                    </p>
+                </div>
+
+                <!-- Rezultate -->
+                <div id="resultState" class="d-none">
+                    <hr class="my-4" />
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>Rezultate
+                        </h5>
+                        <button id="newExtractionBtn" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-arrow-repeat me-1"></i>Extractie noua
+                        </button>
+                    </div>
+                    <div id="resultsContainer"></div>
+                </div>
+
+                <!-- Eroare -->
+                <div id="errorState" class="d-none">
+                    <div class="alert alert-danger rounded-3 mt-3">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <span id="errorMessage"></span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="imageModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 bg-transparent shadow-none">
+            <div class="modal-body text-center p-0 position-relative">
+                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-2"
+                        data-bs-dismiss="modal"></button>
+                <img id="modalImage" src="" class="rounded-4 img-fluid"
+                     style="max-height:80vh; object-fit:contain;" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const imageInput = document.getElementById('imageInput');
+        const extractBtn = document.getElementById('extractBtn');
+        const categorySelect = document.getElementById('categorySelect');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewList = document.getElementById('previewList');
+        let selectedFiles = [];
+        let selectedPreviews = [];
+        const maxImages = @ViewBag.MaxImages;
+
+        dropZone.addEventListener('click', () => imageInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#0d6efd';
+        });
+        dropZone.addEventListener('dragleave', () => dropZone.style.borderColor = '#dee2e6');
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#dee2e6';
+            handleFiles(Array.from(e.dataTransfer.files));
+        });
+
+        imageInput.addEventListener('change', () => {
+            handleFiles(Array.from(imageInput.files));
+        });
+
+        function handleFiles(files) {
+            const validFiles = files.filter(f => f.type.startsWith('image/'));
+
+            if (validFiles.length > maxImages) {
+                showError(`Planul tau permite maxim ${maxImages} imagine(i) per request. Ai selectat ${validFiles.length}.`);
+                imageInput.value = '';
+                selectedFiles = [];
+                previewContainer.classList.add('d-none');
+                previewList.innerHTML = '';
+                extractBtn.disabled = true;
+                return;
+            }
+
+            selectedFiles = [...selectedFiles, ...validFiles].slice(0, maxImages);
+            renderPreviews();
+            checkCanExtract();
+        }
+
+        function renderPreviews() {
+            previewList.innerHTML = '';
+
+            if (selectedFiles.length === 0) {
+                previewContainer.classList.add('d-none');
+                checkCanExtract();
+                return;
+            }
+
+            previewContainer.classList.remove('d-none');
+
+            selectedPreviews = [];
+            selectedFiles.forEach((file, index) => {
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                selectedPreviews[index] = e.target.result;
+
+                const div = document.createElement('div');
+                div.className = 'position-relative text-center';
+                div.style.cssText = 'width:130px;';
+
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'rounded-3 shadow-sm';
+                img.style.cssText = 'width:120px; height:120px; object-fit:cover; cursor:pointer;';
+                img.addEventListener('click', () => openImageModal(e.target.result));
+
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'btn btn-danger position-absolute top-0 end-0 rounded-circle p-0';
+                btn.style.cssText = 'width:22px; height:22px; font-size:13px; line-height:1;';
+                btn.textContent = '×';
+                btn.addEventListener('click', () => removeFile(index));
+
+                const p = document.createElement('p');
+                p.className = 'text-muted small mt-1 mb-0';
+                p.style.cssText = 'width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;';
+                p.textContent = file.name;
+
+                div.appendChild(img);
+                div.appendChild(btn);
+                div.appendChild(p);
+                previewList.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+            });
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            imageInput.value = '';
+            renderPreviews();
+            checkCanExtract();
+        }
+
+        categorySelect.addEventListener('change', checkCanExtract);
+
+        function checkCanExtract() {
+            extractBtn.disabled = !(selectedFiles.length > 0 && categorySelect.value !== '');
+        }
+
+        function openImageModal(src) {
+            document.getElementById('modalImage').src = src;
+            new bootstrap.Modal(document.getElementById('imageModal')).show();
+        }
+
+        extractBtn.addEventListener('click', async () => {
+            if (selectedFiles.length === 0 || !categorySelect.value) return;
+
+            showLoading();
+
+            const formData = new FormData();
+            selectedFiles.forEach(f => formData.append('files', f));
+            formData.append('category', categorySelect.value);
+
+            try {
+                const response = await fetch('/Extraction/Extract', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.limitReached) {
+                    hideLoading();
+                    new bootstrap.Modal(document.getElementById('limitModal')).show();
+                    return;
+                }
+
+                if (!data.success) {
+                    showError(data.error || 'Eroare neasteptata.');
+                    return;
+                }
+
+                showResults(data.data);
+
+            } catch (err) {
+                showError('Eroare de conexiune. Incearca din nou.');
+            }
+        });
+
+        function showResults(results) {
+            document.getElementById('loadingState').classList.add('d-none');
+            document.getElementById('extractionForm').classList.add('d-none');
+            document.getElementById('resultState').classList.remove('d-none');
+            document.getElementById('errorState').classList.add('d-none');
+
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = '';
+
+            results.forEach((result, index) => {
+                if (!result.success) {
+                    container.innerHTML += `
+                        <div class="alert alert-warning mb-3">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Imaginea ${index + 1}: ${result.error}
+                        </div>`;
+                    return;
+                }
+
+                const attrs = result.attributes || {};
+                let attrHtml = Object.entries(attrs)
+                    .filter(([, v]) => v)
+                    .map(([k, v]) => `
+                        <div class="col-md-6">
+                            <div class="card border-0 bg-light rounded-3 p-3">
+                                <p class="text-muted small mb-1">${k}</p>
+                                <p class="fw-semibold mb-0">${v}</p>
+                            </div>
+                        </div>`).join('');
+
+                container.innerHTML += `
+                        <div class="card border-0 shadow-sm rounded-4 mb-4">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="fw-bold mb-0">
+                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        Produs ${index + 1} — ${result.productId}
+                                    </h6>
+                                    <a href="/Export/ExportCurrent?id=${result.id}"
+                                       class="btn btn-outline-success btn-sm">
+                                        <i class="bi bi-file-earmark-excel me-1"></i>Export Excel
+                                    </a>
+                                </div>
+                                <div class="d-flex gap-4">
+                                    ${selectedPreviews[index] ? `
+                                    <div class="flex-shrink-0">
+                                        <img src="" data-preview="${index}"
+                                             class="rounded-3 shadow-sm"
+                                             style="width:140px; height:140px; object-fit:cover; cursor:pointer;" />
+                                    </div>` : ''}
+                                    <div class="row g-2 flex-grow-1 align-content-start">${attrHtml}</div>
+                                </div>
+                            </div>
+                        </div>`;
+            });
+
+            container.querySelectorAll('img[data-preview]').forEach(img => {
+                const i = parseInt(img.dataset.preview);
+                img.src = selectedPreviews[i];
+                img.addEventListener('click', () => openImageModal(selectedPreviews[i]));
+            });
+        }
+
+        function showLoading() {
+            document.getElementById('extractionForm').classList.add('d-none');
+            document.getElementById('loadingState').classList.remove('d-none');
+            document.getElementById('resultState').classList.add('d-none');
+            document.getElementById('errorState').classList.add('d-none');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingState').classList.add('d-none');
+            document.getElementById('extractionForm').classList.remove('d-none');
+        }
+
+        function showError(message) {
+            document.getElementById('loadingState').classList.add('d-none');
+            document.getElementById('extractionForm').classList.remove('d-none');
+            document.getElementById('errorState').classList.remove('d-none');
+            document.getElementById('errorMessage').textContent = message;
+        }
+
+        document.getElementById('newExtractionBtn').addEventListener('click', () => {
+            document.getElementById('resultState').classList.add('d-none');
+            document.getElementById('extractionForm').classList.remove('d-none');
+            document.getElementById('errorState').classList.add('d-none');
+            previewContainer.classList.add('d-none');
+            previewList.innerHTML = '';
+            imageInput.value = '';
+            categorySelect.value = '';
+            extractBtn.disabled = true;
+            selectedFiles = [];
+            selectedPreviews = [];
+        });
+    </script>
+}

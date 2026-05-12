@@ -1,0 +1,141 @@
+@model List<Pixtract.Application.DTOs.PlanDto>
+@{
+    ViewData["Title"] = "Planuri";
+}
+
+
+
+<!-- HERO PRICING -->
+<div class="pricing-hero">
+    <div class="container text-center py-5">
+        <span class="badge hero-badge mb-3">Fara surprize</span>
+        <h1 class="pricing-hero-title">Alege planul potrivit</h1>
+        <p class="pricing-hero-subtitle">Incepe gratuit, upgradeaza oricand</p>
+    </div>
+</div>
+
+<!-- PLAN CARDS -->
+<div class="container pricing-cards-container">
+    <div class="row justify-content-center g-4">
+        @foreach (var plan in Model)
+        {
+            var isPro = plan.Name == "Pro";
+            var isFree = plan.Price == 0;
+            var isCurrent = plan.Id == (ViewBag.CurrentPlanId as int?);
+            <div class="col-md-4">
+                <div class="plan-card @(isPro ? "popular" : "")">
+                    @if (isPro)
+                    {
+                        <div class="popular-badge">
+                            <i class="bi bi-star-fill me-1"></i>POPULAR
+                        </div>
+                    }
+                    <div class="plan-name">@plan.Name</div>
+                    <div class="plan-price">
+                        <span class="plan-amount">$@plan.Price</span>
+                        @if (!isFree)
+                        {
+                            <span class="plan-period">/luna</span>
+                        }
+                    </div>
+                    <ul class="plan-features">
+                        <li>
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span>@plan.DailyImageLimit imagini / zi</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span>@plan.ImagesPerRequest imagini / request</span>
+                        </li>
+                        <li>
+                            @if (plan.CanExportHistory)
+                            {
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                                <span>Export istoric complet</span>
+                            }
+                            else
+                            {
+                                <i class="bi bi-x-circle-fill text-danger"></i>
+                                <span class="text-muted">Export doar rezultat curent</span>
+                            }
+                        </li>
+                    </ul>
+                    @if (isCurrent)
+                    {
+                        <button class="plan-btn plan-btn-default" disabled style="opacity:0.5; cursor:default;">
+                            <i class="bi bi-check2 me-1"></i>Planul curent
+                        </button>
+                    }
+                    else
+                    {
+                        <form asp-controller="Subscription" asp-action="Upgrade" method="post" class="plan-form" data-plan-id="@plan.Id">
+                            <input type="hidden" name="planId" value="@plan.Id" />
+                            <button type="submit" class="plan-btn @(isPro ? "plan-btn-pro" : "plan-btn-default")">
+                                @(isFree ? "Treci la Free" : $"Alege {plan.Name}")
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@if ((ViewBag.CurrentPlanId as int?) > 1)
+{
+    <div class="modal fade" id="downgradeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>Confirma downgrade
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    @if (ViewBag.DaysRemaining != null)
+                    {
+                        <div class="alert alert-warning">
+                            Mai ai <strong>@ViewBag.DaysRemaining zile</strong> ramase din planul <strong>@ViewBag.CurrentPlanName</strong>.
+                        </div>
+                    }
+                    <p>Daca faci downgrade acum, pierzi imediat accesul la beneficiile planului <strong>@ViewBag.CurrentPlanName</strong>.</p>
+                    <ul>
+                        <li>Imagini multiple per request</li>
+                        <li>Export istoric complet</li>
+                        <li>Limita zilnica extinsa</li>
+                    </ul>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Anuleaza</button>
+                    <button type="button" class="btn btn-danger" id="confirmDowngradeBtn">Da, confirma downgrade</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+<script>
+    (function () {
+        var currentPlanId = @(ViewBag.CurrentPlanId ?? 1);
+        if (currentPlanId <= 1) return;
+
+        var pendingForm = null;
+
+        document.querySelectorAll('.plan-form').forEach(function (form) {
+            if (parseInt(form.dataset.planId) < currentPlanId) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    pendingForm = form;
+                    new bootstrap.Modal(document.getElementById('downgradeModal')).show();
+                });
+            }
+        });
+
+        document.getElementById('confirmDowngradeBtn').addEventListener('click', function () {
+            if (pendingForm) pendingForm.submit();
+        });
+    })();
+</script>
+}

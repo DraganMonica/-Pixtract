@@ -1,0 +1,206 @@
+@model AdminVM
+@{
+    ViewData["Title"] = "Admin";
+    var freeCount = Model.Users.Count(u => u.PlanName == "Free");
+    var paidCount = Model.Users.Count(u => u.PlanName != "Free");
+    var proCount = Model.Users.Count(u => u.PlanName == "Pro");
+    var ultraCount = Model.Users.Count(u => u.PlanName == "Ultra");
+    var total = Model.Users.Count;
+    int Pct(int n) => total == 0 ? 0 : (int)Math.Round(n * 100.0 / total);
+    var mostPopular = new[] { ("Free", freeCount), ("Pro", proCount), ("Ultra", ultraCount) }
+        .OrderByDescending(x => x.Item2).First().Item1;
+}
+
+<div class="d-flex align-items-center mb-4">
+    <i class="bi bi-shield-lock fs-4 text-primary me-2"></i>
+    <h4 class="fw-bold mb-0">Panou Admin</h4>
+</div>
+
+<!-- Business Metrics -->
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center">
+                    <div class="bg-primary bg-opacity-10 rounded-3 p-2 me-3">
+                        <i class="bi bi-people text-primary fs-4"></i>
+                    </div>
+                    <div>
+                        <p class="text-muted mb-0 small">Total useri</p>
+                        <h3 class="fw-bold mb-0">@total</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center">
+                    <div class="bg-success bg-opacity-10 rounded-3 p-2 me-3">
+                        <i class="bi bi-person-check text-success fs-4"></i>
+                    </div>
+                    <div>
+                        <p class="text-muted mb-0 small">Useri activi azi</p>
+                        <h3 class="fw-bold mb-0">@Model.ActiveUsersToday</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center">
+                    <div class="bg-warning bg-opacity-10 rounded-3 p-2 me-3">
+                        <i class="bi bi-collection text-warning fs-4"></i>
+                    </div>
+                    <div>
+                        <p class="text-muted mb-0 small">Total extractii</p>
+                        <h3 class="fw-bold mb-0">@Model.TotalExtractions</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center">
+                    <div class="bg-info bg-opacity-10 rounded-3 p-2 me-3">
+                        <i class="bi bi-calendar-day text-info fs-4"></i>
+                    </div>
+                    <div>
+                        <p class="text-muted mb-0 small">Extractii azi</p>
+                        <h3 class="fw-bold mb-0">@Model.TodayExtractions</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Subscription Analytics -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="text-center">
+                        <h4 class="fw-bold mb-0 text-success">@paidCount</h4>
+                        <p class="text-muted small mb-0">Useri cu plan pro/ultra</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="fw-bold mb-0 text-secondary">@freeCount</h4>
+                        <p class="text-muted small mb-0">Useri cu plan free</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="fw-bold mb-0 @(Model.ExpiringSoon > 0 ? "text-danger" : "text-muted")">@Model.ExpiringSoon</h4>
+                        <p class="text-muted small mb-0">Conturi cu planuri care expira in 7 zile</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="fw-bold mb-0 text-primary">@mostPopular</h4>
+                        <p class="text-muted small mb-0">Plan popular</p>
+                    </div>
+                </div>
+                <hr class="my-3" />
+                <h6 class="fw-semibold small mb-2">Distributie planuri</h6>
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Free</span><span class="text-muted">@freeCount (@Pct(freeCount)%)</span>
+                    </div>
+                    <div class="progress" style="height:6px;">
+                        <div class="progress-bar bg-secondary" style="width:@Pct(freeCount)%"></div>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Pro</span><span class="text-muted">@proCount (@Pct(proCount)%)</span>
+                    </div>
+                    <div class="progress" style="height:6px;">
+                        <div class="progress-bar bg-primary" style="width:@Pct(proCount)%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Ultra</span><span class="text-muted">@ultraCount (@Pct(ultraCount)%)</span>
+                    </div>
+                    <div class="progress" style="height:6px;">
+                        <div class="progress-bar bg-warning" style="width:@Pct(ultraCount)%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Categories -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3 text-uppercase" style="font-size:0.75rem; letter-spacing:0.05em; color:#6c757d;">Top Categorii</h6>
+                @if (!Model.TopCategories.Any())
+                {
+                    <p class="text-muted small">Nu exista extractii inca.</p>
+                }
+                else
+                {
+                    var maxCount = Model.TopCategories.First().Count;
+                    @foreach (var cat in Model.TopCategories)
+                    {
+                        var pct = maxCount == 0 ? 0 : (int)Math.Round(cat.Count * 100.0 / maxCount);
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span class="fw-semibold">@cat.Category</span>
+                                <span class="text-muted">@cat.Count extractii</span>
+                            </div>
+                            <div class="progress" style="height:6px;">
+                                <div class="progress-bar bg-primary" style="width:@pct%"></div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Users table -->
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+        <div class="px-4 py-3 border-bottom">
+            <h6 class="fw-bold mb-0">Utilizatori</h6>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="px-4 py-3">Email</th>
+                        <th class="py-3">Plan</th>
+                        <th class="py-3">Inregistrat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.Users)
+                    {
+                        <tr>
+                            <td class="px-4 py-3 text-muted">@user.Email</td>
+                            <td class="py-3">
+                                @{
+                                    var badgeClass = user.PlanName switch
+                                    {
+                                        "Ultra" => "bg-warning text-dark",
+                                        "Pro" => "bg-primary",
+                                        _ => "bg-secondary"
+                                    };
+                                }
+                                <span class="badge @badgeClass">@user.PlanName</span>
+                            </td>
+                            <td class="py-3 text-muted small">@user.CreatedAt.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Pixtract</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+          rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+        <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+            <i class="bi bi-box-seam me-2"></i>Pixtract
+        </a>
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navMain">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMain">
+            <ul class="navbar-nav me-auto">
+                @if (User.IsInRole("Admin"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Admin" asp-action="Index">
+                            <i class="bi bi-shield-lock me-1"></i>Admin Dashboard
+                        </a>
+                    </li>
+                }
+                else if (User.Identity!.IsAuthenticated)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Dashboard" asp-action="Index">
+                            <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Extraction" asp-action="Index">
+                            <i class="bi bi-image me-1"></i>Extragere
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Pricing" asp-action="Index">
+                            <i class="bi bi-tag me-1"></i>Planuri
+                        </a>
+                    </li>
+                }
+            </ul>
+            <ul class="navbar-nav ms-auto align-items-center">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    
+                    <li class="nav-item">
+                        <form asp-controller="Account" asp-action="Logout" method="post">
+                            <button type="submit" class="btn btn-outline-light btn-sm">
+                                <i class="bi bi-box-arrow-right me-1"></i>Logout
+                            </button>
+                        </form>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a asp-controller="Account" asp-action="Login"
+                           class="btn btn-outline-light btn-sm me-2">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="Account" asp-action="Register"
+                           class="btn btn-primary btn-sm">Incearca gratuit</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4 px-4">
+        @RenderBody()
+    </div>
+
+    <!-- limita plan -->
+    <div class="modal fade" id="limitModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-lock-fill text-warning me-2"></i>
+                        Limita zilnica atinsa
+                    </h5>
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <p class="text-muted mb-4">
+                        Ai atins limita zilnica pentru planul tau actual.
+                        Upgradeaza pentru a continua.
+                    </p>
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Pricing" asp-action="Index"
+                           class="btn btn-primary btn-lg">
+                            <i class="bi bi-rocket-takeoff me-2"></i>
+                            Vezi planurile disponibile
+                        </a>
+                        <button class="btn btn-outline-secondary"
+                                data-bs-dismiss="modal">
+                            Poate mai tarziu
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white-50 text-center py-4 mt-4">
+        <small>Pixtract &copy; @DateTime.Now.Year - Developed by Dragan Monica</small>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        toastr.options = { timeOut: 3000, positionClass: 'toast-top-right', closeButton: true };
+        @if (TempData["Success"] != null) {
+            <text>toastr.success('@TempData["Success"]');</text>
+        }
+        @if (TempData["Error"] != null) {
+            <text>toastr.error('@TempData["Error"]');</text>
+        }
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

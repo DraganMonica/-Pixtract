@@ -1,0 +1,21 @@
+# Build output
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Logs
+**/logs/
+*.log
+
+# User uploads (runtime data)
+**/uploads/
+
+# OS
+.DS_Store
+Thumbs.db
