@@ -1,6 +1,6 @@
-# Pixtract
+# 🖼️ Pixtract
 
-> **Note: This is a demo / proof-of-concept project**, not a production application.
+> ⚠️**Note: This is a demo / proof-of-concept project**, not a production application.
 > The AI model runs on Google Colab (session-based, not a permanent server), Stripe is in test mode (no real payments), and the database uses SQL Server LocalDB (local machine only).
 > It was built to demonstrate Clean Architecture, AI integration, and subscription management in ASP.NET Core.
 
@@ -8,7 +8,7 @@
 
 ---
 
-## Table of Contents
+## 📋 Table of Contents
 
 - [Overview](#overview)
 - [Architecture](#architecture)
@@ -28,11 +28,11 @@
 
 ---
 
-## Overview
+## 🔍 Overview
 
 Pixtract solves the problem of manual product cataloguing in e-commerce. Instead of a human reading each product image and filling in attributes, the AI model does it automatically in seconds.
 
-**Supported categories:**
+**📦 Supported categories:**
 - Tricouri dama (Women's T-shirts)
 - Tricouri barbati (Men's T-shirts)
 - Tricouri copii (Children's T-shirts)
@@ -42,7 +42,7 @@ Pixtract solves the problem of manual product cataloguing in e-commerce. Instead
 
 ---
 
-## Architecture
+## 🏗️ Architecture
 
 Pixtract follows **Clean Architecture** — a layered approach where each layer depends only on the layers beneath it. This keeps the business logic independent of the framework, database, and external services.
 
@@ -70,12 +70,12 @@ Pixtract follows **Clean Architecture** — a layered approach where each layer 
 
 **Two separate applications share the same Infrastructure and Domain:**
 
-- **Pixtract.Web** — MVC frontend using cookie-based authentication. Communicates with the API via a typed `ApiClient` HTTP client.
-- **Pixtract.Api** — REST API backend using JWT authentication. This is the layer that talks to the database and the Python AI service.
+- 🌐**Pixtract.Web** — MVC frontend using cookie-based authentication. Communicates with the API via a typed `ApiClient` HTTP client.
+- ⚙️**Pixtract.Api** — REST API backend using JWT authentication. This is the layer that talks to the database and the Python AI service.
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 ### Backend (.NET)
 
@@ -94,7 +94,7 @@ Pixtract follows **Clean Architecture** — a layered approach where each layer 
 | SQL Server (LocalDB) | Database |
 | Swagger / Swashbuckle | API documentation |
 
-### AI Service (Python)
+### 🐍 AI Service (Python)
 
 | Technology | Purpose |
 |---|---|
@@ -109,24 +109,24 @@ Pixtract follows **Clean Architecture** — a layered approach where each layer 
 
 ---
 
-## Features
+## ✨ Features
 
-- **AI-powered attribute extraction** from product images, per category
-- **Single and batch image upload** (up to plan limit per request)
-- **Daily usage limits** enforced per user plan
-- **Subscription plans** (Free, Pro, Ultra) with Stripe checkout
-- **Automatic plan downgrade** when subscription expires (background service)
-- **Export to Excel** — current product or full history, grouped by category
-- **Extraction history** — paginated list of past extractions with image preview
-- **Admin dashboard** — business metrics (total users, active today, extractions), subscription analytics (free vs paid, expiring soon, plan distribution), top categories, full user list with plan badges
-- **Role-based access** — admin user seeded via EF migrations; JWT includes role claims; navbar and controllers restrict access by role
-- **Downgrade confirmation modal** — warns user before switching to a lower plan
-- **Structured logging** throughout all services
-- **Health check endpoint** on the Python API (`/health`)
+- 🤖 **AI-powered attribute extraction** from product images, per category
+- 📤 **Single and batch image upload** (up to plan limit per request)
+- 📊 **Daily usage limits** enforced per user plan
+- 💳 **Subscription plans** (Free, Pro, Ultra) with Stripe checkout
+- 🔄 **Automatic plan downgrade** when subscription expires (background service)
+- 📥 **Export to Excel** — current product or full history, grouped by category
+- 🕓 **Extraction history** — paginated list of past extractions with image preview
+- 🛡️ **Admin dashboard** — business metrics (total users, active today, extractions), subscription analytics (free vs paid, expiring soon, plan distribution), top categories, full user list with plan badges
+- 🔐 **Role-based access** — admin user seeded via EF migrations; JWT includes role claims; navbar and controllers restrict access by role
+- ⚠️ **Downgrade confirmation modal** — warns user before switching to a lower plan
+- 📝 **Structured logging** throughout all services
+- ❤️ **Health check endpoint** on the Python API (`/health`)
 
 ---
 
-## How It Works — End to End
+## ⚙️ How It Works — End to End
 
 ```
 User uploads image + selects category
@@ -174,11 +174,11 @@ Pixtract.Web
 
 ---
 
-## AI Service (Python)
+## 🤖 AI Service (Python)
 
 The AI service runs on **Google Colab** (GPU environment) and is exposed via **ngrok**. Its URL is configured in `appsettings.json` under `PythonApi:BaseUrl`.
 
-### Model
+### 🧠 Model
 
 **Qwen2.5-VL-7B-Instruct** is a 7-billion parameter vision-language model. It receives both an image and a text prompt and returns a JSON response.
 
@@ -186,7 +186,7 @@ The AI service runs on **Google Colab** (GPU environment) and is exposed via **n
 - `do_sample=False` + `temperature=0.1` makes responses deterministic
 - `max_new_tokens=256` is sufficient for a small JSON response
 
-### Image Preprocessing (`prepare_image`)
+### 🖼️ Image Preprocessing (`prepare_image`)
 
 ```
 Raw image bytes
@@ -197,7 +197,7 @@ Raw image bytes
     → sent to model as data URI
 ```
 
-### Prompt Construction (`build_prompt`)
+### 📝 Prompt Construction (`build_prompt`)
 
 Every model call has two parts:
 
@@ -210,7 +210,7 @@ Every model call has two parts:
 - Allowed values for `Culoare de baza` (16 base colors)
 - Allowed shades per base color (`NUANTE`)
 
-### Output Normalization (`normalize_output`)
+### 🔧 Output Normalization (`normalize_output`)
 
 The model output goes through three cleanup steps:
 
@@ -219,13 +219,13 @@ The model output goes through three cleanup steps:
 3. **Color validation** — if `Culoare de baza` is not in the `NUANTE` dictionary, forces `Nuanta` to null (e.g., `Alb` has no shades, so `Nuanta` must be null)
 4. **Character rule** — `Poveste/Personaj` is only valid when `Imprimeu` is `Desene animate`; otherwise forced to null
 
-### JSON Parsing (`parse_json`)
+### 📦 JSON Parsing (`parse_json`)
 
 The model sometimes wraps the JSON in extra text. The parser:
 1. First tries `json.loads()` directly
 2. If that fails, uses regex `\{.*\}` to extract the JSON block from the text
 
-### FastAPI Endpoints
+### 🔌FastAPI Endpoints
 
 | Method | Path | Description |
 |---|---|---|
@@ -234,13 +234,13 @@ The model sometimes wraps the JSON in extra text. The parser:
 
 ---
 
-## Subscription Plans
+## 💳 Subscription Plans
 
 | Plan | Daily Image Limit | Images per Request | Can Export History | Price |
 |---|---|---|---|---|
-| Free | 5 | 1 | No | $0 |
-| Pro | 50 | 5 | Yes | $9.99 |
-| Ultra | 200 | 10 | Yes | $24.99 |
+| 🆓 Free | 5 | 1 | No | $0 |
+| ⭐ Pro | 50 | 5 | Yes | $9.99 |
+| 🚀 Ultra | 200 | 10 | Yes | $24.99 |
 
 **Plan enforcement:**
 - `UsageService.CanProcessAsync()` checks today's usage before every extraction
@@ -249,7 +249,7 @@ The model sometimes wraps the JSON in extra text. The parser:
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 Pixtract/
@@ -307,7 +307,7 @@ Pixtract/
 
 ---
 
-## Database Schema
+## 🗄️ Database Schema
 
 ```
 Plans
@@ -332,54 +332,54 @@ BatchJobs
 
 ## API Endpoints
 
-### Auth
+### 🔑 Auth
 | Method | Route | Description |
 |---|---|---|
 | POST | `/api/auth/register` | Register new user |
 | POST | `/api/auth/login` | Login, returns JWT token |
 
-### Extraction
+### 🖼️ Extraction
 | Method | Route | Auth | Description |
 |---|---|---|---|
 | POST | `/api/extraction` | JWT | Upload images and extract attributes |
 | GET | `/api/extraction/history` | JWT | Get user extraction history |
 
-### Subscription
+### 💳 Subscription
 | Method | Route | Auth | Description |
 |---|---|---|---|
 | POST | `/api/subscription/upgrade` | JWT | Create Stripe checkout session |
 | POST | `/api/subscription/confirm` | JWT | Confirm payment and activate plan |
 
-### Plans
+### 📋 Plans
 | Method | Route | Auth | Description |
 |---|---|---|---|
 | GET | `/api/plans` | JWT | Get all available plans |
 | GET | `/api/plans/user` | JWT | Get current user's plan |
 
-### Dashboard
+### 📊 Dashboard
 | Method | Route | Auth | Description |
 |---|---|---|---|
 | GET | `/api/dashboard` | JWT | Get today's usage, limit, plan, recent extractions |
 
-### Usage
+### 📈 Usage
 | Method | Route | Auth | Description |
 |---|---|---|---|
 | GET | `/api/usage` | JWT | Get images per request limit |
 
-### Export
+### 📥 Export
 | Method | Route | Auth | Description |
 |---|---|---|---|
 | GET | `/api/export/current/{id}` | JWT | Export one extraction to Excel |
 | GET | `/api/export/history` | JWT | Export full history to Excel |
 
-### Admin
+### 🛡️ Admin
 | Method | Route | Auth | Description |
 |---|---|---|---|
 | GET | `/api/admin` | JWT | Users, extractions, active today, expiring soon, top categories |
 
 ---
 
-## Authentication
+## 🔐 Authentication
 
 Pixtract uses a **dual authentication strategy**:
 
@@ -399,7 +399,7 @@ Pixtract uses a **dual authentication strategy**:
 
 ---
 
-## Demo Limitations
+## ⚠️ Demo Limitations
 
 This project was built as a proof-of-concept. The following limitations exist by design and would need to be addressed before any real deployment:
 
@@ -414,15 +414,15 @@ This project was built as a proof-of-concept. The following limitations exist by
 
 ---
 
-## Running the Project
+## 🚀 Running the Project
 
 ### Prerequisites
 
-- .NET 8 SDK
-- SQL Server (LocalDB is included with Visual Studio)
-- Stripe account (test keys work)
-- Google Colab (A100) for the Python AI service
-- ngrok account (free tier works)
+- ✅ .NET 8 SDK
+- ✅ SQL Server (LocalDB is included with Visual Studio)
+- ✅ Stripe account (test keys work)
+- ✅ Google Colab (A100) for the Python AI service
+- ✅ ngrok account (free tier works)
 
 ### Steps
 
@@ -477,7 +477,7 @@ Swagger UI is available at `https://localhost:ZZZZ/swagger`.
 
 ---
 
-## Configuration
+## ⚙️Configuration
 
 | Key | Location | Description |
 |---|---|---|
@@ -495,7 +495,7 @@ Swagger UI is available at `https://localhost:ZZZZ/swagger`.
 
 ---
 
-## Screenshots
+## 📸 Screenshots
 
 ### Frontend
 
@@ -553,7 +553,7 @@ Used token: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` (test token, expired)
 |---|---|
 | ![Swagger subscription](docs/screenshots/swagger-subscription.png) | ![Swagger dashboard](docs/screenshots/dashboard_swagger.png) |
 
-### Python AI Service (Google Colab)
+### 🐍 Python AI Service (Google Colab)
 
 | Colab running | Health check |
 |---|---|
