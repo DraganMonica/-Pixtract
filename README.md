@@ -16,7 +16,7 @@ A demo web application that uses a vision AI model to extract structured product
 > The AI model runs on Google Colab (session-based, not a permanent server), Stripe is in test mode (no real payments), and the database uses SQL Server LocalDB (local machine only).
 
 </div>
----
+
 
 ## 📋 Table of Contents
 
