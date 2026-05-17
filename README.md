@@ -6,8 +6,8 @@
 
 A demo web application that uses a vision AI model to extract structured product attributes (color, pattern, fit, closure type, etc.) from images, ready for export to Excel.
 
-![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=flat-square&logo=dotnet)
-![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-10.0-512BD4?style=flat-square&logo=dotnet)
+![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=flat-square&logo=dotnet)
+![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-8.0-512BD4?style=flat-square&logo=dotnet)
 ![Python](https://img.shields.io/badge/Python-FastAPI-009688?style=flat-square&logo=fastapi)
 ![AI](https://img.shields.io/badge/AI-Qwen2.5--VL--7B-FF6B6B?style=flat-square)
 ![Status](https://img.shields.io/badge/status-demo-orange?style=flat-square)
