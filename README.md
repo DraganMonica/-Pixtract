@@ -61,9 +61,9 @@ Pixtract solves the problem of manual product cataloguing in e-commerce. Instead
 |---|---|
 | ![Landing1](docs/screenshots/landing1.png) | !![Landing](docs/screenshots/landing.png) |
 
-| Landing page | Dashboard page for a user with free plan |
+| Dashboard page for a user with free plan |  |
 |---|---|
-| ![Landing3](docs/screenshots/landing1.png) | !![Dashboard](docs/screenshots/dashboard.png) |
+|![Dashboard](docs/screenshots/dashboard.png) |  |
 
 | Extraction | Extraction result |
 |---|---|
