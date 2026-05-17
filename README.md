@@ -1,16 +1,28 @@
+<div align="center">
+
 # 🖼️ Pixtract
+
+***Extract product attributes from images — automatically.***
+
+A demo web application that uses a vision AI model to extract structured product attributes (color, pattern, fit, closure type, etc.) from images, ready for export to Excel.
+
+![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=flat-square&logo=dotnet)
+![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-10.0-512BD4?style=flat-square&logo=dotnet)
+![Python](https://img.shields.io/badge/Python-FastAPI-009688?style=flat-square&logo=fastapi)
+![AI](https://img.shields.io/badge/AI-Qwen2.5--VL--7B-FF6B6B?style=flat-square)
+![Status](https://img.shields.io/badge/status-demo-orange?style=flat-square)
+
 
 > ⚠️ **Demo / proof-of-concept project** — not a production application.
 > The AI model runs on Google Colab (session-based, not a permanent server), Stripe is in test mode (no real payments), and the database uses SQL Server LocalDB (local machine only).
-> Built to demonstrate Clean Architecture, AI integration, and subscription management in ASP.NET Core.
 
-**Pixtract** is a demo web application that automatically extracts product attributes from images using a vision AI model. Users upload product images (t-shirts, blouses, sandals, etc.), select a category, and the system returns structured attributes (color, pattern, fit, closure type, etc.) ready for export to Excel.
-
+</div>
 ---
 
 ## 📋 Table of Contents
 
 - [Overview](#overview)
+- [Screenshots](#screenshots)
 - [Architecture](#architecture)
 - [Tech Stack](#tech-stack)
 - [Features](#features)
@@ -24,7 +36,7 @@
 - [Demo Limitations](#demo-limitations)
 - [Running the Project](#running-the-project)
 - [Configuration](#configuration)
-- [Screenshots](#screenshots)
+
 
 ---
 
@@ -42,6 +54,65 @@ Pixtract solves the problem of manual product cataloguing in e-commerce. Instead
 
 ---
 
+## 📸 Screenshots
+
+### Frontend
+
+| Landing page | Landing page |
+|---|---|
+| ![Landing1](docs/screenshots/landing1.png) | ![Landing](docs/screenshots/landing.png) |
+
+| Landing page | Dashboard page for a user with free plan |
+|---|---|
+| ![Landing3](docs/screenshots/landing1.png) | ![Dashboard](docs/screenshots/dashboard.png) |
+
+| Extraction | Extraction result |
+|---|---|
+| ![Extraction](docs/screenshots/extraction.png) | ![Extraction result](docs/screenshots/extraction-result.png) |
+
+| Dashboard — extraction history | Excel export (history) |
+|---|---|
+| ![Dashboard history](docs/screenshots/dashboard-history.png) | ![Excel history](docs/screenshots/excel-history.png) |
+
+| Payment - Stripe | Dashboard — Pro plan |
+|---|---|
+| ![Stripe](docs/screenshots/stripe_payment.png) | ![Dashboard Pro](docs/screenshots/dashboard-pro.png) |
+
+| Downgrade confirmation modal | Admin Dashboard |
+|---|---|
+| ![Downgrade modal](docs/screenshots/downgrade-modal.png) | ![Admin Dashboard](docs/screenshots/admin_dashboard.png) |
+
+### Swagger API
+
+| Overview | Register endpoint |
+|---|---|
+| ![Swagger overview](docs/screenshots/swagger-overview.png) | ![Swagger register](docs/screenshots/register.png) |
+
+| Login | Available authorizations |
+|---|---|
+| ![Swagger login](docs/screenshots/login.png) | ![Swagger available authorizations](docs/screenshots/av_auth.png) |
+
+Used token: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` (test token, expired)
+
+| Extraction endpoint | Used image |
+|---|---|
+| ![Swagger extraction](docs/screenshots/swagger-extraction.png) | ![Swagger used image](docs/screenshots/extraction_image.png) |
+
+| Export endpoint | Excel |
+|---|---|
+| ![Swagger export](docs/screenshots/export.png) | ![Swagger excel](docs/screenshots/excel.png) |
+
+| Subscription endpoint | Dashboard endpoint |
+|---|---|
+| ![Swagger subscription](docs/screenshots/swagger-subscription.png) | ![Swagger dashboard](docs/screenshots/dashboard_swagger.png) |
+
+### 🐍 Python AI Service (Google Colab)
+
+| Colab running | Health check |
+|---|---|
+| ![Colab running](docs/screenshots/colab-running.png) | ![Health check](docs/screenshots/health-check.png) |
+
+---
 ## 🏗️ Architecture
 
 Pixtract follows **Clean Architecture** — a layered approach where each layer depends only on the layers beneath it. This keeps the business logic independent of the framework, database, and external services.
@@ -498,60 +569,4 @@ Swagger UI is available at `https://localhost:ZZZZ/swagger`.
 
 ---
 
-## 📸 Screenshots
 
-### Frontend
-
-| Landing page | Landing page |
-|---|---|
-| ![Landing1](docs/screenshots/landing1.png) | ![Landing](docs/screenshots/landing.png) |
-
-| Landing page | Dashboard page for a user with free plan |
-|---|---|
-| ![Landing3](docs/screenshots/landing1.png) | ![Dashboard](docs/screenshots/dashboard.png) |
-
-| Extraction | Extraction result |
-|---|---|
-| ![Extraction](docs/screenshots/extraction.png) | ![Extraction result](docs/screenshots/extraction-result.png) |
-
-| Dashboard — extraction history | Excel export (history) |
-|---|---|
-| ![Dashboard history](docs/screenshots/dashboard-history.png) | ![Excel history](docs/screenshots/excel-history.png) |
-
-| Payment - Stripe | Dashboard — Pro plan |
-|---|---|
-| ![Stripe](docs/screenshots/stripe_payment.png) | ![Dashboard Pro](docs/screenshots/dashboard-pro.png) |
-
-| Downgrade confirmation modal | Admin Dashboard |
-|---|---|
-| ![Downgrade modal](docs/screenshots/downgrade-modal.png) | ![Admin Dashboard](docs/screenshots/admin_dashboard.png) |
-
-### Swagger API
-
-| Overview | Register endpoint |
-|---|---|
-| ![Swagger overview](docs/screenshots/swagger-overview.png) | ![Swagger register](docs/screenshots/register.png) |
-
-| Login | Available authorizations |
-|---|---|
-| ![Swagger login](docs/screenshots/login.png) | ![Swagger available authorizations](docs/screenshots/av_auth.png) |
-
-Used token: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` (test token, expired)
-
-| Extraction endpoint | Used image |
-|---|---|
-| ![Swagger extraction](docs/screenshots/swagger-extraction.png) | ![Swagger used image](docs/screenshots/extraction_image.png) |
-
-| Export endpoint | Excel |
-|---|---|
-| ![Swagger export](docs/screenshots/export.png) | ![Swagger excel](docs/screenshots/excel.png) |
-
-| Subscription endpoint | Dashboard endpoint |
-|---|---|
-| ![Swagger subscription](docs/screenshots/swagger-subscription.png) | ![Swagger dashboard](docs/screenshots/dashboard_swagger.png) |
-
-### 🐍 Python AI Service (Google Colab)
-
-| Colab running | Health check |
-|---|---|
-| ![Colab running](docs/screenshots/colab-running.png) | ![Health check](docs/screenshots/health-check.png) |
