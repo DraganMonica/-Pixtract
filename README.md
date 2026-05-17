@@ -13,7 +13,7 @@ A demo web application that uses a vision AI model to extract structured product
 ![Status](https://img.shields.io/badge/status-demo-orange?style=flat-square)
 
 
-> ⚠️ **Demo / proof-of-concept project** — not a production application.
+
 > The AI model runs on Google Colab (session-based, not a permanent server), Stripe is in test mode (no real payments), and the database uses SQL Server LocalDB (local machine only).
 
 </div>
