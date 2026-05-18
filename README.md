@@ -52,6 +52,71 @@ Pixtract solves the problem of manual product cataloguing in e-commerce. Instead
 - Bluze dama (Women's blouses)
 - Sandale dama (Women's sandals)
 - Pantaloni sport barbati (Men's sport pants)
+---
+
+## 📸 Screenshots
+
+### Frontend
+
+| Landing page | Landing page |
+|---|---|
+| ![Landing1](docs/screenshots/landing1.png) | !![Landing](docs/screenshots/landing.png) |
+
+| Dashboard page for a user with free plan |  |
+|---|---|
+|![Dashboard](docs/screenshots/dashboard.png) |  |
+
+| Extraction | Extraction result |
+|---|---|
+| ![Extraction](docs/screenshots/extraction.png) | ![Extraction result](docs/screenshots/extraction-result.png) |
+
+
+| Dashboard — extraction history | Excel export (history) |
+|---|---|
+| ![Dashboard history](docs/screenshots/dashboard-history.png) |![Excel history](docs/screenshots/excel-history.png)  |
+
+| Payment -Stripe | Dashboard — Pro plan |
+|---|---|
+| ![Stripe ](docs/screenshots/stripe_payment.png) | ![Dashboard Pro](docs/screenshots/dashboard-pro.png) |
+
+
+
+| Downgrade confirmation modal | Admin Dashboard |
+|---|---|
+| ![Downgrade modal](docs/screenshots/downgrade-modal.png) |  ![Admin Dashboard](docs/screenshots/admin_dashboard.png) |
+
+
+### Swagger API
+
+| Overview | Register endpoint |
+|---|---|
+| ![Swagger overview](docs/screenshots/swagger-overview.png) | ![Swagger register](docs/screenshots/register.png) |
+
+| Login | Available authorizations |
+|---|---|
+| ![Swagger login](docs/screenshots/login.png) | ![Swagger available authorizations](docs/screenshots/av_auth.png) |
+
+Used token: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` (test token, expired)
+
+
+|Extraction endpoint| Used image|
+|---|---|
+| ![Swagger extraction](docs/screenshots/swagger-extraction.png) | ![Swagger used image](docs/screenshots/extraction_image.png) |
+
+|Export endpoint| excel|
+|---|---|
+| ![Swagger export](docs/screenshots/export.png) | ![Swagger excel](docs/screenshots/excel.png) |
+
+
+| Subscription endpoint | Dashboard endpoint |
+|---|---|
+| ![Swagger subscription](docs/screenshots/swagger-subscription.png) | ![Swagger dashboard](docs/screenshots/dashboard_swagger.png) |
+
+### 🐍 Python AI Service (Google Colab)
+
+| Colab running | Health check |
+|---|---|
+| ![Colab running](docs/screenshots/colab-running.png) | ![Health check](docs/screenshots/health-check.png) |
 
 ---
 
