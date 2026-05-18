@@ -6,8 +6,8 @@
 
 A demo web application that uses a vision AI model to extract structured product attributes (color, pattern, fit, closure type, etc.) from images, ready for export to Excel.
 
-![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=flat-square&logo=dotnet)
-![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-8.0-512BD4?style=flat-square&logo=dotnet)
+![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=flat-square&logo=dotnet)
+![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-10.0-512BD4?style=flat-square&logo=dotnet)
 ![Python](https://img.shields.io/badge/Python-FastAPI-009688?style=flat-square&logo=fastapi)
 ![AI](https://img.shields.io/badge/AI-Qwen2.5--VL--7B-FF6B6B?style=flat-square)
 ![Status](https://img.shields.io/badge/status-demo-orange?style=flat-square)
@@ -37,6 +37,7 @@ A demo web application that uses a vision AI model to extract structured product
 - [Demo Limitations](#demo-limitations)
 - [Running the Project](#running-the-project)
 - [Configuration](#configuration)
+
 
 ---
 
@@ -119,6 +120,65 @@ Used token: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` (test token, expired)
 
 ---
 
+## 📸 Screenshots
+
+### Frontend
+
+| Landing page | Landing page |
+|---|---|
+| ![Landing1](docs/screenshots/landing1.png) | ![Landing](docs/screenshots/landing.png) |
+
+| Dashboard page for a user with free plan |  |
+|---|---|
+|![Dashboard](docs/screenshots/dashboard.png) |  |
+
+| Extraction | Extraction result |
+|---|---|
+| ![Extraction](docs/screenshots/extraction.png) | ![Extraction result](docs/screenshots/extraction-result.png) |
+
+| Dashboard — extraction history | Excel export (history) |
+|---|---|
+| ![Dashboard history](docs/screenshots/dashboard-history.png) | ![Excel history](docs/screenshots/excel-history.png) |
+
+| Payment - Stripe | Dashboard — Pro plan |
+|---|---|
+| ![Stripe](docs/screenshots/stripe_payment.png) | ![Dashboard Pro](docs/screenshots/dashboard-pro.png) |
+
+| Downgrade confirmation modal | Admin Dashboard |
+|---|---|
+| ![Downgrade modal](docs/screenshots/downgrade-modal.png) | ![Admin Dashboard](docs/screenshots/admin_dashboard.png) |
+
+### Swagger API
+
+| Overview | Register endpoint |
+|---|---|
+| ![Swagger overview](docs/screenshots/swagger-overview.png) | ![Swagger register](docs/screenshots/register.png) |
+
+| Login | Available authorizations |
+|---|---|
+| ![Swagger login](docs/screenshots/login.png) | ![Swagger available authorizations](docs/screenshots/av_auth.png) |
+
+Used token: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` (test token, expired)
+
+| Extraction endpoint | Used image |
+|---|---|
+| ![Swagger extraction](docs/screenshots/swagger-extraction.png) | ![Swagger used image](docs/screenshots/extraction_image.png) |
+
+| Export endpoint | Excel |
+|---|---|
+| ![Swagger export](docs/screenshots/export.png) | ![Swagger excel](docs/screenshots/excel.png) |
+
+| Subscription endpoint | Dashboard endpoint |
+|---|---|
+| ![Swagger subscription](docs/screenshots/swagger-subscription.png) | ![Swagger dashboard](docs/screenshots/dashboard_swagger.png) |
+
+### 🐍 Python AI Service (Google Colab)
+
+| Colab running | Health check |
+|---|---|
+| ![Colab running](docs/screenshots/colab-running.png) | ![Health check](docs/screenshots/health-check.png) |
+
+---
 ## 🏗️ Architecture
 
 Pixtract follows **Clean Architecture** — a layered approach where each layer depends only on the layers beneath it. This keeps the business logic independent of the framework, database, and external services.
@@ -147,8 +207,8 @@ Pixtract follows **Clean Architecture** — a layered approach where each layer 
 
 **Two separate applications share the same Infrastructure and Domain:**
 
-- 🌐**Pixtract.Web** — MVC frontend using cookie-based authentication. Communicates with the API via a typed `ApiClient` HTTP client.
-- ⚙️**Pixtract.Api** — REST API backend using JWT authentication. This is the layer that talks to the database and the Python AI service.
+- 🌐 **Pixtract.Web** — MVC frontend using cookie-based authentication. Communicates with the API via a typed `ApiClient` HTTP client.
+- ⚙️ **Pixtract.Api** — REST API backend using JWT authentication. This is the layer that talks to the database and the Python AI service.
 
 ---
 
@@ -158,8 +218,8 @@ Pixtract follows **Clean Architecture** — a layered approach where each layer 
 
 | Technology | Purpose |
 |---|---|
-| ASP.NET Core 8.0 | Web framework (MVC + REST API) |
-| Entity Framework Core 8.0 | ORM — database access and migrations |
+| ASP.NET Core 10.0 | Web framework (MVC + REST API) |
+| Entity Framework Core 10.0 | ORM — database access and migrations |
 | ASP.NET Core Identity | User management, password hashing |
 | JWT Bearer Authentication | API token-based auth |
 | Cookie Authentication | Web session auth |
@@ -182,7 +242,7 @@ Pixtract follows **Clean Architecture** — a layered approach where each layer 
 | PyTorch (bfloat16) | GPU inference with reduced memory usage |
 | Pillow | Image preprocessing (resize, convert) |
 | pyngrok | Expose local Colab server to the internet |
-| Google Colab | Cloud GPU environment for model hosting |
+| Google Colab (A100) | Cloud GPU environment for model hosting |
 
 ---
 
@@ -253,7 +313,7 @@ Pixtract.Web
 
 ## 🤖 AI Service (Python)
 
-The AI service runs on **Google Colab** (GPU environment) and is exposed via **ngrok**. Its URL is configured in `appsettings.json` under `PythonApi:BaseUrl`.
+The AI service runs on **Google Colab** (A100 GPU environment) and is exposed via **ngrok**. Its URL is configured in `appsettings.json` under `PythonApi:BaseUrl`.
 
 ### 🧠 Model
 
@@ -302,7 +362,7 @@ The model sometimes wraps the JSON in extra text. The parser:
 1. First tries `json.loads()` directly
 2. If that fails, uses regex `\{.*\}` to extract the JSON block from the text
 
-### 🔌FastAPI Endpoints
+### 🔌 FastAPI Endpoints
 
 | Method | Path | Description |
 |---|---|---|
@@ -373,13 +433,16 @@ Pixtract/
 │       ├── ExtractionStatus.cs        # Success, Failed
 │       └── BatchStatus.cs             # Pending, Processing, Done, Failed
 │
-└── Pixtract.Infrastructure/           # Implementations
-    ├── Data/
-    │   ├── ApplicationDbContext.cs
-    │   └── Configurations/            # EF Fluent API configs per entity
-    ├── Services/                      # All IService implementations
-    └── Config/
-        └── DependencyInjection.cs     # Service registrations (Scoped)
+├── Pixtract.Infrastructure/           # Implementations
+│   ├── Data/
+│   │   ├── ApplicationDbContext.cs
+│   │   └── Configurations/            # EF Fluent API configs per entity
+│   ├── Services/                      # All IService implementations
+│   └── Config/
+│       └── DependencyInjection.cs     # Service registrations (Scoped)
+│
+└── python/
+    └── cod_pixtract.py                # Python AI service (FastAPI + Qwen2.5-VL)
 ```
 
 ---
@@ -407,7 +470,7 @@ BatchJobs
 
 ---
 
-## API Endpoints
+## 🔌 API Endpoints
 
 ### 🔑 Auth
 | Method | Route | Description |
@@ -495,7 +558,7 @@ This project was built as a proof-of-concept. The following limitations exist by
 
 ### Prerequisites
 
-- ✅ .NET 8 SDK
+- ✅ .NET 10 SDK
 - ✅ SQL Server (LocalDB is included with Visual Studio)
 - ✅ Stripe account (test keys work)
 - ✅ Google Colab (A100) for the Python AI service
@@ -532,7 +595,7 @@ Edit `Pixtract.Api/appsettings.json`:
 
 **3. Start the Python AI service**
 
-Open `cod_pixtract.py` in Google Colab, run all cells. Copy the ngrok URL printed at the end and paste it into `PythonApi:BaseUrl` in `appsettings.json`.
+Open `python/cod_pixtract.py` in Google Colab, run all cells. Copy the ngrok URL printed at the end and paste it into `PythonApi:BaseUrl` in `appsettings.json`.
 
 **4. Start the .NET applications**
 
@@ -554,7 +617,7 @@ Swagger UI is available at `https://localhost:ZZZZ/swagger`.
 
 ---
 
-## ⚙️Configuration
+## ⚙️ Configuration
 
 | Key | Location | Description |
 |---|---|---|
